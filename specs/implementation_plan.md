@@ -36,7 +36,7 @@ Phase 5: Calendar
     ↓
 Phase 6: Status (Who's Home)
     ↓
-Phase 7: Requests
+✅ Phase 7: Requests
     ↓
 Phase 8: Settings & Invite System
     ↓
