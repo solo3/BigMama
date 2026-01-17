@@ -1,0 +1,31 @@
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.layout-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+}
+
+.layout-main {
+    flex: 1;
+    padding: var(--spacing-md);
+    padding-bottom: 80px;
+    /* Space for bottom nav on mobile */
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+    .layout-body {
+        flex-direction: row;
+    }
+
+    .layout-main {
+        padding-bottom: var(--spacing-md);
+    }
+}

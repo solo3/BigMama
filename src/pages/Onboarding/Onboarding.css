@@ -1,0 +1,107 @@
+.onboarding-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: var(--spacing-xl);
+    background-color: var(--color-background);
+}
+
+.onboarding-content {
+    background: var(--color-surface);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+.onboarding-content h1 {
+    color: var(--color-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.onboarding-content p {
+    color: var(--color-text-secondary);
+    margin-bottom: var(--spacing-xl);
+}
+
+.onboarding-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+.onboarding-section {
+    text-align: right;
+    padding: var(--spacing-lg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+
+.onboarding-section h2 {
+    font-size: var(--text-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.onboarding-section form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.onboarding-section input {
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-base);
+}
+
+.primary-button {
+    background-color: var(--color-primary);
+    color: white;
+    padding: var(--spacing-md);
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-weight: var(--font-bold);
+}
+
+.secondary-button {
+    background-color: transparent;
+    color: var(--color-primary);
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-sm);
+    cursor: not-allowed;
+    opacity: 0.5;
+    width: 100%;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--color-text-secondary);
+    font-weight: var(--font-bold);
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.divider:not(:empty)::before {
+    margin-inline-end: var(--spacing-md);
+}
+
+.divider:not(:empty)::after {
+    margin-inline-start: var(--spacing-md);
+}
+
+.invite-hint {
+    font-size: var(--text-sm);
+}
