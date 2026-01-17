@@ -1,6 +1,7 @@
 import React from 'react';
 import { Header } from '../Header/Header';
 import { Navigation } from '../Navigation/Navigation';
+import { OfflineIndicator } from '../OfflineIndicator';
 import './Layout.css';
 
 interface LayoutProps {
@@ -17,6 +18,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
                     {children}
                 </main>
             </div>
+            <OfflineIndicator />
         </div>
     );
 };

@@ -8,6 +8,8 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { useEvents } from '../../hooks/useData';
 import { createEvent, deleteEvent } from '../../services/events';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../hooks/useToast';
+import { LoadingSkeleton } from '../../components/common/LoadingSkeleton';
 import './Calendar.css';
 
 const locales = {
@@ -25,6 +27,7 @@ const localizer = dateFnsLocalizer({
 export const CalendarPage: React.FC = () => {
     const { events, loading } = useEvents();
     const { familyId, user } = useAuth();
+    const { addToast } = useToast();
     const [view, setView] = useState<View>(Views.MONTH);
     const [date, setDate] = useState(new Date());
 
@@ -51,9 +54,10 @@ export const CalendarPage: React.FC = () => {
                     assignees: [],
                     createdBy: user.uid,
                 });
+                addToast('אירוע נוצר בהצלחה', 'success');
             } catch (error) {
                 console.error("Error creating event:", error);
-                alert("אירעה שגיאה ביצירת האירוע");
+                addToast("אירעה שגיאה ביצירת האירוע", 'error');
             }
         }
     };
@@ -64,16 +68,22 @@ export const CalendarPage: React.FC = () => {
             if (window.confirm('למחוק את האירוע?')) {
                 try {
                     await deleteEvent(familyId, event.id);
+                    addToast('אירוע נמחק בהצלחה', 'success');
                 } catch (error) {
                     console.error("Error deleting event:", error);
-                    alert("אירעה שגיאה במחיקת האירוע");
+                    addToast("אירעה שגיאה במחיקת האירוע", 'error');
                 }
             }
         }
     };
 
     if (loading) {
-        return <div className="p-8 text-center">טוען יומן...</div>;
+        return (
+            <div className="calendar-container">
+                <h1 className="text-2xl font-bold mb-4 text-primary">לוח שנה משפחתי</h1>
+                <LoadingSkeleton width="100%" height="calc(100vh - 200px)" borderRadius={8} />
+            </div>
+        );
     }
 
     return (

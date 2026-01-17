@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useTasks } from '@/hooks/useTasks';
+import { useToast } from '@/hooks/useToast';
 import { useEvents, useRequests } from '@/hooks/useData';
 import { useFamilyMembers, usePresence } from '@/hooks/useFamily';
 import { createTask, toggleTaskStatus } from '@/services/tasks';
 import { createRequest } from '@/services/requests';
 import { updateMemberStatus } from '@/services/members';
 import { TaskStatus, PresenceStatus } from '@/types/models';
+import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
 import './Dashboard.css';
 
 export const DashboardPage: React.FC = () => {
     const { user, familyId } = useAuth();
+    const { addToast } = useToast();
     const { tasks, loading: tasksLoading } = useTasks();
     const { events, loading: eventsLoading } = useEvents();
     const { requests, loading: requestsLoading } = useRequests();
     const { members, loading: membersLoading } = useFamilyMembers();
-    const { todayStatus, loading: presenceLoading } = usePresence();
+    const { todayStatus } = usePresence();
 
     // Task State
     const [newTaskTitle, setNewTaskTitle] = useState('');
@@ -39,8 +42,10 @@ export const DashboardPage: React.FC = () => {
                 createdBy: user.uid,
             });
             setNewTaskTitle('');
+            addToast('משימה נוצרה בהצלחה!', 'success');
         } catch (error) {
             console.error('Failed to add task:', error);
+            addToast('שגיאה ביצירת המשימה', 'error');
         } finally {
             setIsAddingTask(false);
         }
@@ -60,8 +65,10 @@ export const DashboardPage: React.FC = () => {
             });
             setNewRequestTitle('');
             setShowRequestForm(false);
+            addToast('בקשה נוצרה בהצלחה!', 'success');
         } catch (error) {
             console.error('Failed to add request:', error);
+            addToast('שגיאה ביצירת הבקשה', 'error');
         } finally {
             setIsAddingRequest(false);
         }
@@ -73,6 +80,7 @@ export const DashboardPage: React.FC = () => {
             await toggleTaskStatus(familyId, taskId, currentStatus);
         } catch (error) {
             console.error('Failed to toggle task:', error);
+            addToast('שגיאה עדכון סטטוס המשימה', 'error');
         }
     };
 
@@ -84,16 +92,15 @@ export const DashboardPage: React.FC = () => {
 
         try {
             await updateMemberStatus(familyId, user.uid, dateId, newStatus);
+            addToast(`סטטוס עודכן ל-${newStatus === 'home' ? 'בבית' : 'מחוץ לבית'}`, 'success');
         } catch (error) {
             console.error('Failed to update presence:', error);
+            addToast('שגיאה בעדכון הנוכחות', 'error');
         }
     };
 
-    const isLoading = tasksLoading || eventsLoading || requestsLoading || membersLoading || presenceLoading;
+    // Removed blocking loading state to show skeletons individually
 
-    if (isLoading && !members.length) {
-        return <div className="loading-container">טוען נתונים...</div>;
-    }
 
     return (
         <div className="dashboard">
@@ -109,30 +116,39 @@ export const DashboardPage: React.FC = () => {
                         <h3>מי בבית?</h3>
                     </div>
                     <div className="members-grid">
-                        {members.map(member => {
-                            const status = todayStatus?.members[member.uid] || 'away';
-                            const isMe = member.uid === user?.uid;
-                            return (
-                                <div
-                                    key={member.uid}
-                                    className={`member-status ${status} ${isMe ? 'is-me' : ''}`}
-                                    onClick={isMe ? handleTogglePresence : undefined}
-                                >
-                                    <div className="member-avatar">
-                                        {member.photoURL ? (
-                                            <img src={member.photoURL} alt={member.displayName} />
-                                        ) : (
-                                            <div className="avatar-placeholder">{member.displayName[0]}</div>
-                                        )}
-                                        <div className="status-indicator">
-                                            {status === 'home' ? '🏠' : '🚗'}
-                                        </div>
-                                    </div>
-                                    <span>{member.displayName}</span>
-                                    {isMe && <div className="me-badge">את/ה</div>}
+                        {membersLoading && !members.length ? (
+                            Array(4).fill(0).map((_, i) => (
+                                <div key={i} className="member-status">
+                                    <LoadingSkeleton variant="circular" width={60} height={60} />
+                                    <LoadingSkeleton width={50} height={14} style={{ marginTop: 8 }} />
                                 </div>
-                            );
-                        })}
+                            ))
+                        ) : (
+                            members.map(member => {
+                                const status = todayStatus?.members[member.uid] || 'away';
+                                const isMe = member.uid === user?.uid;
+                                return (
+                                    <div
+                                        key={member.uid}
+                                        className={`member-status ${status} ${isMe ? 'is-me' : ''}`}
+                                        onClick={isMe ? handleTogglePresence : undefined}
+                                    >
+                                        <div className="member-avatar">
+                                            {member.photoURL ? (
+                                                <img src={member.photoURL} alt={member.displayName} />
+                                            ) : (
+                                                <div className="avatar-placeholder">{member.displayName[0]}</div>
+                                            )}
+                                            <div className="status-indicator">
+                                                {status === 'home' ? '🏠' : '🚗'}
+                                            </div>
+                                        </div>
+                                        <span>{member.displayName}</span>
+                                        {isMe && <div className="me-badge">את/ה</div>}
+                                    </div>
+                                );
+                            })
+                        )}
                     </div>
                 </section>
 
@@ -157,18 +173,29 @@ export const DashboardPage: React.FC = () => {
                         </form>
 
                         <ul className="dashboard-list">
-                            {tasks.filter(t => t.status === 'todo').slice(0, 5).map(task => (
-                                <li key={task.id} className="list-item">
-                                    <input
-                                        type="checkbox"
-                                        checked={task.status === 'done'}
-                                        onChange={() => handleToggleTask(task.id, task.status)}
-                                    />
-                                    <span>{task.title}</span>
-                                </li>
-                            ))}
-                            {tasks.filter(t => t.status === 'todo').length === 0 && (
-                                <p className="empty-state">אין משימות להיום 🎉</p>
+                            {tasksLoading && !tasks.length ? (
+                                Array(3).fill(0).map((_, i) => (
+                                    <li key={i} className="list-item">
+                                        <LoadingSkeleton width={20} height={20} borderRadius="50%" />
+                                        <LoadingSkeleton width="70%" height={16} />
+                                    </li>
+                                ))
+                            ) : (
+                                <>
+                                    {tasks.filter(t => t.status === 'todo').slice(0, 5).map(task => (
+                                        <li key={task.id} className="list-item">
+                                            <input
+                                                type="checkbox"
+                                                checked={task.status === 'done'}
+                                                onChange={() => handleToggleTask(task.id, task.status)}
+                                            />
+                                            <span>{task.title}</span>
+                                        </li>
+                                    ))}
+                                    {tasks.filter(t => t.status === 'todo').length === 0 && (
+                                        <p className="empty-state">אין משימות להיום 🎉</p>
+                                    )}
+                                </>
                             )}
                         </ul>
                     </div>
@@ -181,15 +208,26 @@ export const DashboardPage: React.FC = () => {
                     </div>
                     <div className="widget-content">
                         <ul className="dashboard-list">
-                            {events.slice(0, 3).map(event => (
-                                <li key={event.id} className="list-item event">
-                                    <div className="event-time">
-                                        {event.startDate?.toDate ? event.startDate.toDate().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }) : 'All Day'}
-                                    </div>
-                                    <span>{event.title}</span>
-                                </li>
-                            ))}
-                            {events.length === 0 && <p className="empty-state">אין אירועים בקרוב</p>}
+                            {eventsLoading && !events.length ? (
+                                Array(3).fill(0).map((_, i) => (
+                                    <li key={i} className="list-item event">
+                                        <LoadingSkeleton width={30} height={14} />
+                                        <LoadingSkeleton width="60%" height={16} />
+                                    </li>
+                                ))
+                            ) : (
+                                <>
+                                    {events.slice(0, 3).map(event => (
+                                        <li key={event.id} className="list-item event">
+                                            <div className="event-time">
+                                                {event.startDate?.toDate ? event.startDate.toDate().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' }) : 'All Day'}
+                                            </div>
+                                            <span>{event.title}</span>
+                                        </li>
+                                    ))}
+                                    {events.length === 0 && <p className="empty-state">אין אירועים בקרוב</p>}
+                                </>
+                            )}
                         </ul>
                     </div>
                 </section>
@@ -219,14 +257,25 @@ export const DashboardPage: React.FC = () => {
                         )}
 
                         <ul className="dashboard-list">
-                            {requests.filter(r => r.status === 'open').slice(0, 3).map(req => (
-                                <li key={req.id} className="list-item request">
-                                    <span className="request-type">{req.type === 'suggestion' ? '💡' : '📢'}</span>
-                                    <span>{req.title}</span>
-                                </li>
-                            ))}
-                            {requests.filter(r => r.status === 'open').length === 0 && (
-                                <p className="empty-state">אין בקשות חדשות</p>
+                            {requestsLoading && !requests.length ? (
+                                Array(3).fill(0).map((_, i) => (
+                                    <li key={i} className="list-item request">
+                                        <LoadingSkeleton width={20} height={20} borderRadius="50%" />
+                                        <LoadingSkeleton width="70%" height={16} />
+                                    </li>
+                                ))
+                            ) : (
+                                <>
+                                    {requests.filter(r => r.status === 'open').slice(0, 3).map(req => (
+                                        <li key={req.id} className="list-item request">
+                                            <span className="request-type">{req.type === 'suggestion' ? '💡' : '📢'}</span>
+                                            <span>{req.title}</span>
+                                        </li>
+                                    ))}
+                                    {requests.filter(r => r.status === 'open').length === 0 && (
+                                        <p className="empty-state">אין בקשות חדשות</p>
+                                    )}
+                                </>
                             )}
                         </ul>
                     </div>

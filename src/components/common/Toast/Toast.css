@@ -1,0 +1,85 @@
+.toast-container {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    /* RTL, so left is good for visibility or maybe right since it's Hebrew? Usually left bottom is fine or center. Let's stack on bottom-left or bottom-right.
+                   For LTR apps bottom-right is common. For RTL, bottom-left might be better. Let's go with bottom-left for now. */
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    min-width: 300px;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    animation: toastSlideIn 0.3s ease-out forwards;
+    direction: rtl;
+    border-right: 4px solid transparent;
+    /* Status color bar */
+}
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.toast.success {
+    border-right-color: #2e7d32;
+}
+
+.toast.success .toast-icon {
+    color: #2e7d32;
+}
+
+.toast.error {
+    border-right-color: #d32f2f;
+}
+
+.toast.error .toast-icon {
+    color: #d32f2f;
+}
+
+.toast.info {
+    border-right-color: #0288d1;
+}
+
+.toast.info .toast-icon {
+    color: #0288d1;
+}
+
+.toast-message {
+    flex: 1;
+    font-size: 0.95rem;
+    color: #333;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s;
+}
+
+.toast-close:hover {
+    color: #333;
+}

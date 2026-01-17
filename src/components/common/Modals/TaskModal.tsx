@@ -19,13 +19,16 @@ export const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSave, i
     const [dueDate, setDueDate] = useState('');
     const [loading, setLoading] = useState(false);
 
+    // Validation state
+    const [touched, setTouched] = useState<Record<string, boolean>>({});
+    const [errors, setErrors] = useState<Record<string, string>>({});
+
     useEffect(() => {
         if (initialData) {
             setTitle(initialData.title);
             setDescription(initialData.description || '');
             setAssigneeId(initialData.assignees?.[0] || ''); // Assuming single assignee for now
             if (initialData.dueDate) {
-                // Convert Firestore Timestamp to YYYY-MM-DD
                 const date = initialData.dueDate.toDate();
                 setDueDate(date.toISOString().split('T')[0]);
             } else {
@@ -37,12 +40,49 @@ export const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSave, i
             setAssigneeId('');
             setDueDate('');
         }
+        setTouched({});
+        setErrors({});
     }, [initialData, isOpen]);
+
+    const validate = (fieldName?: string) => {
+        const newErrors: Record<string, string> = { ...errors };
+
+        if (!fieldName || fieldName === 'title') {
+            if (!title.trim()) {
+                newErrors.title = 'כותרת המשימה היא שדה חובה';
+            } else if (title.length < 2) {
+                newErrors.title = 'הכותרת חייבת להכיל לפחות 2 תווים';
+            } else {
+                delete newErrors.title;
+            }
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     if (!isOpen) return null;
 
+    const handleBlur = (field: string) => {
+        setTouched(prev => ({ ...prev, [field]: true }));
+        validate(field);
+    };
+
+    const handleChangeTitle = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTitle(e.target.value);
+        if (touched.title) {
+            validate('title'); // Re-validate if already touched
+        }
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setTouched({ title: true });
+
+        if (!validate()) {
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -56,21 +96,19 @@ export const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSave, i
             if (dueDate) {
                 taskData.dueDate = Timestamp.fromDate(new Date(dueDate));
             } else {
-                taskData.dueDate = undefined; // How to handle clearing? Firestore might need FieldValue.delete() but let's stick to undefined or null logic if supported or just update
-                // If updateTask doesn't handle undefined for deletion, we might need a specific handling.
-                // existing updateTask implementation uses spreads. Firestore update ignores undefined fields usually unless explicitly ignored or handled.
-                // Let's assume for now we set it.
+                taskData.dueDate = undefined;
             }
 
             await onSave(taskData);
             onClose();
         } catch (error) {
             console.error('Error saving task:', error);
-            // Could add error handling UI here
         } finally {
             setLoading(false);
         }
     };
+
+    const isFormValid = !errors.title && title.trim().length > 0;
 
     return (
         <div className="modal-overlay" onClick={onClose}>
@@ -80,18 +118,21 @@ export const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSave, i
                     <button className="close-btn" onClick={onClose}><X size={24} /></button>
                 </div>
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} noValidate>
                     <div className="form-group">
-                        <label htmlFor="title">כותרת</label>
+                        <label htmlFor="title">כותרת <span className="required-star">*</span></label>
                         <input
                             type="text"
                             id="title"
-                            className="form-control"
+                            className={`form-control ${touched.title && errors.title ? 'is-invalid' : ''}`}
                             value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            required
+                            onChange={handleChangeTitle}
+                            onBlur={() => handleBlur('title')}
                             placeholder="מה צריך לעשות?"
                         />
+                        {touched.title && errors.title && (
+                            <div className="invalid-feedback">{errors.title}</div>
+                        )}
                     </div>
 
                     <div className="form-group">
@@ -137,7 +178,11 @@ export const TaskModal: React.FC<TaskModalProps> = ({ isOpen, onClose, onSave, i
                         <button type="button" className="cancel-btn" onClick={onClose} disabled={loading}>
                             ביטול
                         </button>
-                        <button type="submit" className="save-btn" disabled={loading}>
+                        <button
+                            type="submit"
+                            className="save-btn"
+                            disabled={loading || !isFormValid}
+                        >
                             {loading ? 'שומר...' : (initialData ? 'עדכן' : 'צור משימה')}
                         </button>
                     </div>

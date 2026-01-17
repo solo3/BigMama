@@ -3,9 +3,11 @@ import { Plus, Trash2, Edit2, Calendar } from 'lucide-react';
 import { useTasks } from '../../hooks/useTasks';
 import { useFamilyMembers } from '../../hooks/useFamily';
 import { useAuth } from '../../hooks/useAuth';
+import { useToast } from '../../hooks/useToast';
 import { createTask, updateTask, deleteTask, toggleTaskStatus } from '../../services/tasks';
 import { TaskModal } from '../../components/common/Modals/TaskModal';
 import { Task } from '../../types/models';
+import { LoadingSkeleton } from '../../components/common/LoadingSkeleton';
 import './Tasks.css';
 
 type TabType = 'todo' | 'mine' | 'completed';
@@ -14,6 +16,7 @@ export const TasksPage = () => {
     const { tasks, loading: tasksLoading } = useTasks();
     const { members } = useFamilyMembers();
     const { user, familyId } = useAuth();
+    const { addToast } = useToast();
     const [activeTab, setActiveTab] = useState<TabType>('todo');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -34,6 +37,7 @@ export const TasksPage = () => {
         try {
             if (editingTask) {
                 await updateTask(familyId, editingTask.id, taskData);
+                addToast('משימה עודכנה בהצלחה', 'success');
             } else {
                 await createTask(familyId, {
                     ...taskData,
@@ -41,11 +45,12 @@ export const TasksPage = () => {
                     assignees: taskData.assignees || [],
                     createdBy: user?.uid || '',
                     title: taskData.title || '',
-                } as any); // Type assertion needed because Omit<Task, ...> logic in service might be strict or type mismatch in Partial
+                } as any);
+                addToast('משימה נוצרה בהצלחה', 'success');
             }
         } catch (error) {
             console.error("Failed to save task", error);
-            alert("שגיאה בשמירת המשימה");
+            addToast("שגיאה בשמירת המשימה", 'error');
         }
     };
 
@@ -53,8 +58,10 @@ export const TasksPage = () => {
         if (!familyId || !window.confirm('האם למחוק את המשימה?')) return;
         try {
             await deleteTask(familyId, taskId);
+            addToast('משימה נמחקה בהצלחה', 'success');
         } catch (error) {
             console.error("Failed to delete task", error);
+            addToast("שגיאה במחיקת המשימה", 'error');
         }
     };
 
@@ -62,8 +69,11 @@ export const TasksPage = () => {
         if (!familyId) return;
         try {
             await toggleTaskStatus(familyId, task.id, task.status);
+            // Optional: toast for status toggle might be too noisy, but let's add it for consistency or maybe skip for toggle
+            // addToast('סטטוס משימה עודכן', 'info'); 
         } catch (error) {
             console.error("Failed to toggle status", error);
+            addToast("שגיאה בעדכון סטטוס", 'error');
         }
     };
 
@@ -89,7 +99,30 @@ export const TasksPage = () => {
     const filteredTasks = getFilteredTasks();
 
     if (tasksLoading) {
-        return <div className="loading-container">טוען משימות...</div>;
+        return (
+            <div className="tasks-page-container">
+                <header className="tasks-header">
+                    <LoadingSkeleton width={200} height={40} />
+                    <LoadingSkeleton width={120} height={40} borderRadius={8} />
+                </header>
+                <div className="tasks-tabs" style={{ marginBottom: '2rem' }}>
+                    <LoadingSkeleton width={80} height={30} />
+                    <LoadingSkeleton width={80} height={30} />
+                    <LoadingSkeleton width={80} height={30} />
+                </div>
+                <div className="tasks-list">
+                    {Array(5).fill(0).map((_, i) => (
+                        <div key={i} className="task-item">
+                            <LoadingSkeleton width={24} height={24} borderRadius={'50%'} />
+                            <div className="task-content">
+                                <LoadingSkeleton width="60%" height={24} style={{ marginBottom: 4 }} />
+                                <LoadingSkeleton width="40%" height={16} />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
     }
 
     return (

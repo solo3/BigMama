@@ -7,6 +7,7 @@ import { DashboardPage } from './pages/Dashboard/DashboardPage';
 import { SettingsPage } from './pages/Settings/SettingsPage';
 import { TasksPage } from './pages/Tasks/TasksPage';
 import { CalendarPage } from './pages/Calendar/CalendarPage';
+import { RequestsPage } from './pages/Requests/RequestsPage';
 import { DevLogger } from './components/common/DevLogger/DevLogger';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/tasks" element={<TasksPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
+          <Route path="/requests" element={<RequestsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Layout>
