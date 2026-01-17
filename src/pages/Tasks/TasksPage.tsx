@@ -39,13 +39,15 @@ export const TasksPage = () => {
                 await updateTask(familyId, editingTask.id, taskData);
                 addToast('משימה עודכנה בהצלחה', 'success');
             } else {
-                await createTask(familyId, {
-                    ...taskData,
+                const newTask: Omit<Task, 'id' | 'createdAt' | 'updatedAt'> = {
+                    title: taskData.title!,
+                    description: taskData.description,
                     status: 'todo',
                     assignees: taskData.assignees || [],
                     createdBy: user?.uid || '',
-                    title: taskData.title || '',
-                } as any);
+                    dueDate: taskData.dueDate,
+                };
+                await createTask(familyId, newTask);
                 addToast('משימה נוצרה בהצלחה', 'success');
             }
         } catch (error) {

@@ -1,24 +1,31 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { createFamily } from '@/services/family';
+import { useToast } from '@/hooks/useToast';
 import './Onboarding.css';
 
 export const OnboardingPage: React.FC = () => {
-    const { user, refreshFamily } = useAuth();
+    const { user } = useAuth();
+    const { addToast } = useToast();
     const [familyName, setFamilyName] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleCreateFamily = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!user || !familyName.trim()) return;
+        console.log('Attempting to create family...', familyName);
+        if (!user || !familyName.trim() || loading) return;
 
         setLoading(true);
         try {
-            await createFamily(user.uid, familyName, user.displayName || 'משתמש');
-            await refreshFamily();
-        } catch (error) {
-            alert('Failed to create family. Please try again.');
-        } finally {
+            const familyId = await createFamily(user.uid, familyName, user.displayName || 'משתמש');
+            console.log('Family created successfully with ID:', familyId);
+            addToast('המשפחה נוצרה בהצלחה!', 'success');
+
+            // Safety: If navigation doesn't happen in 5 seconds, let user try again
+            setTimeout(() => setLoading(false), 5000);
+        } catch (error: any) {
+            console.error('Failed to create family:', error);
+            addToast('שגיאה ביצירת המשפחה. נסו שוב.', 'error');
             setLoading(false);
         }
     };

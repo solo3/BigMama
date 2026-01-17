@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User as FirebaseUser } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, DocumentSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { subscribeToAuthChanges, logout } from '../services/auth';
 
 interface AuthContextType {
     user: FirebaseUser | null;
+    userData: any | null;
     familyId: string | null;
     loading: boolean;
     loadingFamily: boolean;
@@ -17,6 +18,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [user, setUser] = useState<FirebaseUser | null>(null);
+    const [userData, setUserData] = useState<any | null>(null);
     const [familyId, setFamilyId] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
     const [loadingFamily, setLoadingFamily] = useState(false);
@@ -26,9 +28,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             const userDoc = await getDoc(doc(db, 'users', uid));
             if (userDoc.exists()) {
-                setFamilyId(userDoc.data().familyId);
+                const data = userDoc.data();
+                setFamilyId(data.familyId);
+                setUserData(data);
             } else {
                 setFamilyId(null);
+                setUserData(null);
             }
         } catch (error) {
             console.error('Error fetching familyId:', error);
@@ -45,22 +50,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     useEffect(() => {
-        const unsubscribe = subscribeToAuthChanges((currentUser) => {
+        let unsubscribeUser: (() => void) | undefined;
+
+        const unsubscribeAuth = subscribeToAuthChanges((currentUser) => {
             setUser(currentUser);
+
+            // Clean up previous user listener
+            if (unsubscribeUser) {
+                unsubscribeUser();
+                unsubscribeUser = undefined;
+            }
+
             if (currentUser) {
-                fetchFamilyId(currentUser.uid);
+                setLoadingFamily(true);
+                // Real-time listener for user document to get familyId
+                unsubscribeUser = onSnapshot(doc(db, 'users', currentUser.uid),
+                    (snapshot: DocumentSnapshot) => {
+                        if (snapshot.exists()) {
+                            const data = snapshot.data();
+                            setFamilyId(data?.familyId || null);
+                            setUserData(data || null);
+                        } else {
+                            setFamilyId(null);
+                            setUserData(null);
+                        }
+                        setLoadingFamily(false);
+                        setLoading(false); // Auth + User Data ready
+                    },
+                    (err: Error) => {
+                        console.error('Error listening to user doc:', err);
+                        setLoadingFamily(false);
+                        setLoading(false);
+                    }
+                );
             } else {
                 setFamilyId(null);
+                setUserData(null);
                 setLoadingFamily(false);
+                setLoading(false); // Auth ready (no user)
             }
-            setLoading(false);
         });
 
-        return () => unsubscribe();
+        return () => {
+            unsubscribeAuth();
+            if (unsubscribeUser) unsubscribeUser();
+        };
     }, []);
 
     const value = {
         user,
+        userData,
         familyId,
         loading,
         loadingFamily,

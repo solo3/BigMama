@@ -2,6 +2,8 @@
 
 BigMama is a Hebrew-language family productivity web application built with React, TypeScript, and Firebase. It helps families coordinate tasks, events, presence status, and family requests in one centralized platform.
 
+> **📘 Non-Technical Guide**: If you are looking for simple setup and deployment instructions, please see the [Operations Runbook](./RUNBOOK.md).
+
 ## 📋 Prerequisites
 
 - **Node.js**: v16.x or higher

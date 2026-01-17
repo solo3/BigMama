@@ -2,38 +2,48 @@ import {
     collection,
     doc,
     setDoc,
-    addDoc,
     onSnapshot,
-    serverTimestamp
+    serverTimestamp,
+    writeBatch
 } from 'firebase/firestore';
 import { db } from './firebase';
+import { Family } from '../types/models';
 
 export const createFamily = async (uid: string, familyName: string, userName: string) => {
     try {
-        // 1. Create Family Document
-        const familyRef = await addDoc(collection(db, 'families'), {
+        const batch = writeBatch(db);
+
+        // 1. Generate Family ID
+        const familyRef = doc(collection(db, 'families'));
+        const familyId = familyRef.id;
+
+        // 2. Add Family Doc
+        batch.set(familyRef, {
             name: familyName,
             createdAt: serverTimestamp(),
             createdBy: uid
         });
 
-        const familyId = familyRef.id;
-
-        // 2. Create Member Document (Subcollection)
-        await setDoc(doc(db, 'families', familyId, 'members', uid), {
+        // 3. Add Member Doc
+        const memberRef = doc(db, 'families', familyId, 'members', uid);
+        batch.set(memberRef, {
             uid,
             displayName: userName,
             role: 'admin',
             joinedAt: serverTimestamp()
         });
 
-        // 3. Update User Document
-        await setDoc(doc(db, 'users', uid), {
+        // 4. Update User Doc
+        const userRef = doc(db, 'users', uid);
+        batch.set(userRef, {
             uid,
             displayName: userName,
             familyId: familyId,
             updatedAt: serverTimestamp()
         });
+
+        // 5. Commit Batch
+        await batch.commit();
 
         return familyId;
     } catch (error) {
@@ -54,10 +64,10 @@ export const updateFamilyName = async (familyId: string, newName: string) => {
     }
 };
 
-export const subscribeToFamily = (familyId: string, callback: (family: any) => void) => {
+export const subscribeToFamily = (familyId: string, callback: (family: Family | null) => void) => {
     return onSnapshot(doc(db, 'families', familyId), (doc) => {
         if (doc.exists()) {
-            callback({ id: doc.id, ...doc.data() });
+            callback({ id: doc.id, ...doc.data() } as Family);
         } else {
             callback(null);
         }

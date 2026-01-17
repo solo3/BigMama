@@ -1,118 +1,143 @@
-/* Calendar.css */
 .calendar-container {
-    height: calc(100vh - 100px);
-    /* Adjust based on header/layout */
-    padding: var(--spacing-lg);
-    background: var(--bg-primary);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    flex-direction: column;
+    padding: var(--spacing-md) var(--spacing-lg);
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--color-background);
+    min-height: calc(100vh - 80px);
+}
+
+.calendar-container h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin-bottom: var(--spacing-xl);
+    background: linear-gradient(135deg, var(--color-primary), #A78BFA);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 .rbc-calendar {
-    font-family: var(--font-primary);
-    color: var(--text-primary);
+    font-family: var(--font-family);
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--glass-shadow);
+    padding: var(--spacing-md);
 }
 
-/* Header customization */
+/* Toolbar */
 .rbc-toolbar {
-    margin-bottom: var(--spacing-md);
-    flex-direction: row-reverse;
-    /* For RTL if needed, or just flex manipulation */
+    margin-bottom: var(--spacing-lg);
     padding: var(--spacing-sm);
-    background: var(--bg-secondary);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-color);
-    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.rbc-toolbar .rbc-toolbar-label {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text);
 }
 
 .rbc-toolbar button {
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-sm);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    font-weight: 500;
+    border: 1px solid var(--color-border);
+    background: white;
+    color: var(--color-text);
+    padding: 8px 16px;
+    font-weight: 600;
+    border-radius: var(--radius-md);
     transition: all 0.2s ease;
+    cursor: pointer;
 }
 
 .rbc-toolbar button:hover {
-    background-color: var(--primary-light);
-    color: var(--primary-color);
-    border-color: var(--primary-color);
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    border-color: var(--color-primary-light);
 }
 
 .rbc-toolbar button.rbc-active {
-    background-color: var(--primary-color);
+    background: var(--color-primary);
     color: white;
-    border-color: var(--primary-color);
+    border-color: var(--color-primary);
     box-shadow: var(--shadow-sm);
 }
 
-/* Event styling */
+.rbc-toolbar button:active,
+.rbc-toolbar button.rbc-active:hover {
+    background: var(--color-primary-dark);
+}
+
+/* Event */
 .rbc-event {
-    background-color: var(--primary-color);
-    border-radius: var(--radius-sm);
+    background: linear-gradient(135deg, var(--color-primary), #A78BFA);
     border: none;
-    box-shadow: var(--shadow-xs);
-    padding: 2px 5px;
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 6px rgba(124, 92, 255, 0.2);
+    padding: 2px 8px;
     font-size: 0.85rem;
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    transition: transform 0.2s ease;
 }
 
 .rbc-event:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-    z-index: 2;
+    transform: scale(1.02);
+    z-index: 10;
 }
 
-.rbc-event-content {
-    font-weight: 500;
+.rbc-event-label {
+    font-weight: 700;
+    opacity: 0.8;
 }
 
-/* Grid styling */
-.rbc-month-view,
-.rbc-time-view {
-    border-radius: var(--radius-md);
-    border: 1px solid var(--border-color);
-    overflow: hidden;
-}
-
+/* Grid & Headers */
 .rbc-header {
-    padding: var(--spacing-sm);
-    font-weight: 600;
-    color: var(--text-secondary);
-    border-bottom: 1px solid var(--border-color);
-    background: var(--bg-tertiary);
+    padding: 12px 0;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    border-bottom: 2px solid var(--color-primary-light);
 }
 
-.rbc-off-range-bg {
-    background: var(--bg-secondary);
+.rbc-month-view,
+.rbc-time-view,
+.rbc-agenda-view {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: white;
 }
 
 .rbc-today {
-    background-color: var(--primary-light-transparent);
-    /* Needs definition or fallback */
+    background: var(--color-primary-light);
 }
 
-/* Time view specifics */
-.rbc-time-header-content {
-    border-left: 1px solid var(--border-color);
+.rbc-off-range-bg {
+    background: #fdfdfd;
 }
 
-.rbc-timeslot-group {
-    border-bottom: 1px solid var(--border-light);
+/* Agenda View */
+.rbc-agenda-view table.rbc-agenda-table {
+    border: none;
 }
 
-.rbc-time-gutter .rbc-timeslot-group {
-    border-left: 1px solid var(--border-color);
-    /* RTL consideration */
+.rbc-agenda-view table.rbc-agenda-table thead>tr>th {
+    background: var(--color-primary-light);
+    color: var(--color-primary-dark);
+    padding: 12px;
 }
 
-/* RTL overrides if necessary */
-[dir="rtl"] .rbc-toolbar {
-    flex-direction: row;
+.rbc-agenda-date-cell {
+    font-weight: 700;
+    color: var(--color-primary);
 }
 
-/* Modal-like overlay for adding/editing (if not using a separate modal component) */
-/* Ideally prompts are separate React Portals/Dialogs */
+/* Responsive adjustments */
+@media (max-width: 600px) {
+    .rbc-toolbar {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .rbc-toolbar-label {
+        order: 1;
+    }
+}

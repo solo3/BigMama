@@ -5,12 +5,12 @@ import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 // Note: For Phase 1 (Local First), we use mock/emulator config.
 // Real config will be added when deploying to production.
 const firebaseConfig = {
-    apiKey: "mock-api-key",
-    authDomain: "bigmama-dev.firebaseapp.com",
-    projectId: "bigmama-dev",
-    storageBucket: "bigmama-dev.appspot.com",
-    messagingSenderId: "mock-sender-id",
-    appId: "mock-app-id"
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "mock-api-key",
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "bigmama-dev.firebaseapp.com",
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "bigmama-dev",
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "bigmama-dev.appspot.com",
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "mock-sender-id",
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || "mock-app-id"
 };
 
 const app = initializeApp(firebaseConfig);

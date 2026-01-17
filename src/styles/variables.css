@@ -39,13 +39,23 @@
   --radius-full: 9999px;
 
   /* Typography */
-  --font-family: 'Heebo', 'Inter', sans-serif;
+  --font-family: 'Outfit', 'Heebo', 'Inter', sans-serif;
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
   --text-base: 1rem;
   --text-lg: 1.125rem;
   --text-xl: 1.25rem;
   --text-2xl: 1.5rem;
+
+  /* Glassmorphism */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.3);
+  --glass-shadow: 0 8px 32px 0 rgba(124, 92, 255, 0.1);
+
+  /* Refined Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 24px rgba(124, 92, 255, 0.06);
+  --shadow-lg: 0 16px 40px rgba(124, 92, 255, 0.1);
 }
 
 * {

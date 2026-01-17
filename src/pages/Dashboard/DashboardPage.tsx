@@ -143,7 +143,12 @@ export const DashboardPage: React.FC = () => {
                                                 {status === 'home' ? '🏠' : '🚗'}
                                             </div>
                                         </div>
-                                        <span>{member.displayName}</span>
+                                        <div className="member-info">
+                                            <span className="member-name">{member.displayName}</span>
+                                            <span className="member-status-text">
+                                                {status === 'home' ? 'בבית' : 'מחוץ לבית'}
+                                            </span>
+                                        </div>
                                         {isMe && <div className="me-badge">את/ה</div>}
                                     </div>
                                 );

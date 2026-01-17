@@ -8,10 +8,15 @@ service cloud.firestore {
     }
 
     // Helper function to check if user is a member of the family
-    // Note: We use exists() but carefully to avoid circular triggers
     function isMember(familyId) {
       return isAuthenticated() && 
              exists(/databases/$(database)/documents/families/$(familyId)/members/$(request.auth.uid));
+    }
+    
+    // Helper to check if user is an admin of the family
+    function isAdmin(familyId) {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/families/$(familyId)/members/$(request.auth.uid)).data.role == 'admin';
     }
 
     // User profile: only the user themselves can read/write their profile
@@ -21,25 +26,36 @@ service cloud.firestore {
 
     // Families: 
     match /families/{familyId} {
-      // Allow creation if the user is authenticated (first user becomes admin)
+      // Allow creation if the user is authenticated (logic usually handled by setting up subcollections)
       allow create: if isAuthenticated();
       
-      // Allow read for members (base family doc)
+      // Allow read for members
       allow read: if isMember(familyId);
-      // Allow name updates for admins (or just members for now in Phase 1)
-      allow update: if isMember(familyId);
+      
+      // Allow updates only for members (e.g. changing name). 
+      // Ideally restrict to admins, but keeping flexible for MVP.
+      allow update: if isAdmin(familyId);
 
-      // Members subcollection - Critical to break circularity
+      // Members subcollection
       match /members/{memberId} {
-        // Allow reading my own member doc to prove membership
-        allow read: if isAuthenticated() && request.auth.uid == memberId;
-        // Allow members to read other members
+        // Anyone in family can read members
         allow read: if isMember(familyId);
-        // Allow management
-        allow write: if isMember(familyId);
+        
+        // Creation (Joining): Currently flexible for invite flows
+        allow create: if isAuthenticated();
+        
+        // Updates:
+        // 1. Admin can update anyone
+        // 2. User can update themselves (but NOT role)
+        allow update: if isAdmin(familyId) || 
+                     (request.auth.uid == memberId && 
+                      (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])));
+        
+        // Deletion: Only admins can remove members
+        allow delete: if isAdmin(familyId);
       }
 
-      // Other subcollections: Standard membership check
+      // Feature Collections
       match /tasks/{taskId} { 
         allow read, write: if isMember(familyId); 
       }

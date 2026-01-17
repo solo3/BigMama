@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Member, DailyStatus } from '../types/models';
+import { Member, DailyStatus, Family } from '../types/models';
 import { subscribeToMembers, subscribeToDailyStatus } from '../services/members';
 import { subscribeToFamily } from '../services/family';
 import { useAuth } from './useAuth';
 
 export const useFamily = () => {
     const { familyId } = useAuth();
-    const [family, setFamily] = useState<any>(null);
+    const [family, setFamily] = useState<Family | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

@@ -3,6 +3,7 @@ import { Calendar, dateFnsLocalizer, View, Views } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { he } from 'date-fns/locale';
 import { Timestamp } from 'firebase/firestore';
+import { Event as FamilyEvent } from '../../types/models';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 import { useEvents } from '../../hooks/useData';
@@ -62,7 +63,16 @@ export const CalendarPage: React.FC = () => {
         }
     };
 
-    const handleSelectEvent = async (event: any) => {
+    interface CalendarEvent {
+        id: string;
+        title: string;
+        start: Date;
+        end: Date;
+        allDay: boolean;
+        resource: FamilyEvent;
+    }
+
+    const handleSelectEvent = async (event: CalendarEvent) => {
         const action = window.prompt(`אירוע: ${event.title}\n[1] ערוך (לא מיושם)\n[2] מחק`);
         if (action === '2' && familyId) {
             if (window.confirm('למחוק את האירוע?')) {
