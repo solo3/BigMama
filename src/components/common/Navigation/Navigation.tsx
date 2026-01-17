@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { Home, CheckSquare, Calendar, MessageSquare, Settings } from 'lucide-react';
 import './Navigation.css';
 
@@ -6,26 +7,26 @@ export const Navigation: React.FC = () => {
     return (
         <nav className="navigation">
             <div className="nav-items">
-                <a href="/" className="nav-item active">
+                <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     <Home size={24} />
                     <span>ראשי</span>
-                </a>
-                <a href="/tasks" className="nav-item">
+                </NavLink>
+                <NavLink to="/tasks" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     <CheckSquare size={24} />
                     <span>משימות</span>
-                </a>
-                <a href="/calendar" className="nav-item">
+                </NavLink>
+                <NavLink to="/calendar" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     <Calendar size={24} />
                     <span>יומן</span>
-                </a>
-                <a href="/requests" className="nav-item">
+                </NavLink>
+                <NavLink to="/requests" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     <MessageSquare size={24} />
                     <span>בקשות</span>
-                </a>
-                <a href="/settings" className="nav-item">
+                </NavLink>
+                <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     <Settings size={24} />
                     <span>הגדרות</span>
-                </a>
+                </NavLink>
             </div>
         </nav>
     );

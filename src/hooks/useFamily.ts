@@ -1,7 +1,31 @@
 import { useState, useEffect } from 'react';
 import { Member, DailyStatus } from '../types/models';
 import { subscribeToMembers, subscribeToDailyStatus } from '../services/members';
+import { subscribeToFamily } from '../services/family';
 import { useAuth } from './useAuth';
+
+export const useFamily = () => {
+    const { familyId } = useAuth();
+    const [family, setFamily] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (!familyId) {
+            setFamily(null);
+            setLoading(false);
+            return;
+        }
+
+        const unsubscribe = subscribeToFamily(familyId, (updatedFamily) => {
+            setFamily(updatedFamily);
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [familyId]);
+
+    return { family, loading };
+};
 
 export const useFamilyMembers = () => {
     const { familyId } = useAuth();

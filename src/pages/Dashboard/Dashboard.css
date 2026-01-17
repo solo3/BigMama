@@ -72,13 +72,40 @@
     flex-direction: column;
     align-items: center;
     gap: var(--spacing-xs);
-    text-align: center;
+}
+
+.member-status.is-me {
+    cursor: pointer;
+}
+
+.member-status.is-me:hover .member-avatar {
+    transform: scale(1.05);
 }
 
 .member-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
     position: relative;
-    width: 56px;
-    height: 56px;
+    border: 3px solid transparent;
+    transition: transform 0.2s ease;
+}
+
+.member-status.home .member-avatar {
+    border-color: #4CAF50;
+}
+
+.member-status.away .member-avatar {
+    border-color: #ff9800;
+}
+
+.me-badge {
+    font-size: 10px;
+    background: var(--color-primary);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-top: -4px;
 }
 
 .avatar-placeholder {
@@ -107,6 +134,35 @@
     justify-content: center;
     font-size: 14px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Quick Add Form */
+.quick-add-form {
+    display: flex;
+    gap: var(--spacing-xs);
+    margin-bottom: var(--spacing-md);
+}
+
+.quick-add-form input {
+    flex: 1;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+}
+
+.quick-add-form button {
+    padding: 0 var(--spacing-md);
+    background: var(--color-primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+}
+
+.quick-add-form button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 /* Dashboard List */

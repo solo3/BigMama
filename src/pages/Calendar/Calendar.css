@@ -1,0 +1,118 @@
+/* Calendar.css */
+.calendar-container {
+    height: calc(100vh - 100px);
+    /* Adjust based on header/layout */
+    padding: var(--spacing-lg);
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+}
+
+.rbc-calendar {
+    font-family: var(--font-primary);
+    color: var(--text-primary);
+}
+
+/* Header customization */
+.rbc-toolbar {
+    margin-bottom: var(--spacing-md);
+    flex-direction: row-reverse;
+    /* For RTL if needed, or just flex manipulation */
+    padding: var(--spacing-sm);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    justify-content: space-between;
+}
+
+.rbc-toolbar button {
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.rbc-toolbar button:hover {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.rbc-toolbar button.rbc-active {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Event styling */
+.rbc-event {
+    background-color: var(--primary-color);
+    border-radius: var(--radius-sm);
+    border: none;
+    box-shadow: var(--shadow-xs);
+    padding: 2px 5px;
+    font-size: 0.85rem;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.rbc-event:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+    z-index: 2;
+}
+
+.rbc-event-content {
+    font-weight: 500;
+}
+
+/* Grid styling */
+.rbc-month-view,
+.rbc-time-view {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.rbc-header {
+    padding: var(--spacing-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+    border-bottom: 1px solid var(--border-color);
+    background: var(--bg-tertiary);
+}
+
+.rbc-off-range-bg {
+    background: var(--bg-secondary);
+}
+
+.rbc-today {
+    background-color: var(--primary-light-transparent);
+    /* Needs definition or fallback */
+}
+
+/* Time view specifics */
+.rbc-time-header-content {
+    border-left: 1px solid var(--border-color);
+}
+
+.rbc-timeslot-group {
+    border-bottom: 1px solid var(--border-light);
+}
+
+.rbc-time-gutter .rbc-timeslot-group {
+    border-left: 1px solid var(--border-color);
+    /* RTL consideration */
+}
+
+/* RTL overrides if necessary */
+[dir="rtl"] .rbc-toolbar {
+    flex-direction: row;
+}
+
+/* Modal-like overlay for adding/editing (if not using a separate modal component) */
+/* Ideally prompts are separate React Portals/Dialogs */

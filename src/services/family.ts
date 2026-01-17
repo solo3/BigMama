@@ -3,6 +3,7 @@ import {
     doc,
     setDoc,
     addDoc,
+    onSnapshot,
     serverTimestamp
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -39,4 +40,26 @@ export const createFamily = async (uid: string, familyName: string, userName: st
         console.error('Error creating family:', error);
         throw error;
     }
+};
+
+export const updateFamilyName = async (familyId: string, newName: string) => {
+    try {
+        await setDoc(doc(db, 'families', familyId), {
+            name: newName,
+            updatedAt: serverTimestamp()
+        }, { merge: true });
+    } catch (error) {
+        console.error('Error updating family name:', error);
+        throw error;
+    }
+};
+
+export const subscribeToFamily = (familyId: string, callback: (family: any) => void) => {
+    return onSnapshot(doc(db, 'families', familyId), (doc) => {
+        if (doc.exists()) {
+            callback({ id: doc.id, ...doc.data() });
+        } else {
+            callback(null);
+        }
+    });
 };

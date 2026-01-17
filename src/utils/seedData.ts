@@ -9,7 +9,7 @@ import { db } from '../services/firebase';
 export const seedDevData = async (uid: string) => {
     if (!import.meta.env.DEV) return;
 
-    const familyId = 'dev_family_' + Math.random().toString(36).substr(2, 9);
+    const familyId = 'dev_family_123';
     const now = Timestamp.now();
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
