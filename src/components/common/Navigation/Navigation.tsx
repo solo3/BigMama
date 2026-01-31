@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, CheckSquare, Calendar, MessageSquare, Settings } from 'lucide-react';
+import { Home, CheckSquare, Calendar, Users, MessageSquare, Settings } from 'lucide-react';
 import './Navigation.css';
 
 export const Navigation: React.FC = () => {
@@ -18,6 +18,10 @@ export const Navigation: React.FC = () => {
                 <NavLink to="/calendar" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     <Calendar size={24} />
                     <span>יומן</span>
+                </NavLink>
+                <NavLink to="/status" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+                    <Users size={24} />
+                    <span>נוכחות</span>
                 </NavLink>
                 <NavLink to="/requests" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     <MessageSquare size={24} />

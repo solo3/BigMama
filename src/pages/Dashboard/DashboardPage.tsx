@@ -12,7 +12,7 @@ import { LoadingSkeleton } from '@/components/common/LoadingSkeleton';
 import './Dashboard.css';
 
 export const DashboardPage: React.FC = () => {
-    const { user, familyId } = useAuth();
+    const { user, familyId, familyData } = useAuth();
     const { addToast } = useToast();
     const { tasks, loading: tasksLoading } = useTasks();
     const { events, loading: eventsLoading } = useEvents();
@@ -105,8 +105,13 @@ export const DashboardPage: React.FC = () => {
     return (
         <div className="dashboard">
             <header className="dashboard-header">
-                <h1>שלום, {user?.displayName?.split(' ')[0]}! 👋</h1>
-                <p className="text-secondary">הנה מה שקורה היום במשפחה.</p>
+                <div className="welcome-section">
+                    <h1>שלום {user?.displayName?.split(' ')[0]} 👋</h1>
+                    {familyData?.name && (
+                        <h2 className="family-welcome">ברוכים הבאים למשפחת {familyData.name}</h2>
+                    )}
+                    <p className="text-secondary">הנה מה שקורה היום אצלנו.</p>
+                </div>
             </header>
 
             <div className="dashboard-grid">

@@ -76,3 +76,13 @@ export interface DailyStatus {
     members: Record<string, PresenceStatus>; // UID -> status
     updatedAt: Timestamp;
 }
+
+export interface Invite {
+    id: string; // The invite code
+    familyId: string;
+    role: UserRole;
+    createdBy: string;
+    createdAt: Timestamp;
+    usedBy?: string;
+    usedAt?: Timestamp;
+}

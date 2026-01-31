@@ -2,12 +2,13 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { doc, getDoc, onSnapshot, DocumentSnapshot } from 'firebase/firestore';
 import { db } from '../services/firebase';
-import { subscribeToAuthChanges, logout } from '../services/auth';
+import { subscribeToAuthChanges, logout as firebaseLogout } from '../services/auth';
 
 interface AuthContextType {
     user: FirebaseUser | null;
     userData: any | null;
     familyId: string | null;
+    familyData: any | null;
     loading: boolean;
     loadingFamily: boolean;
     logout: () => Promise<void>;
@@ -20,6 +21,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [user, setUser] = useState<FirebaseUser | null>(null);
     const [userData, setUserData] = useState<any | null>(null);
     const [familyId, setFamilyId] = useState<string | null>(null);
+    const [familyData, setFamilyData] = useState<any | null>(null);
     const [loading, setLoading] = useState(true);
     const [loadingFamily, setLoadingFamily] = useState(false);
 
@@ -47,6 +49,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         if (user) {
             await fetchFamilyId(user.uid);
         }
+    };
+
+    const logout = async () => {
+        await firebaseLogout();
+        setUser(null);
+        setUserData(null);
+        setFamilyId(null);
+        setFamilyData(null);
     };
 
     useEffect(() => {
@@ -97,10 +107,31 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         };
     }, []);
 
+    useEffect(() => {
+        let unsubscribeFamily: (() => void) | undefined;
+
+        if (familyId) {
+            unsubscribeFamily = onSnapshot(doc(db, 'families', familyId), (snapshot) => {
+                if (snapshot.exists()) {
+                    setFamilyData(snapshot.data());
+                } else {
+                    setFamilyData(null);
+                }
+            });
+        } else {
+            setFamilyData(null);
+        }
+
+        return () => {
+            if (unsubscribeFamily) unsubscribeFamily();
+        };
+    }, [familyId]);
+
     const value = {
         user,
         userData,
         familyId,
+        familyData,
         loading,
         loadingFamily,
         logout,

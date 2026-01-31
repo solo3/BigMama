@@ -3,7 +3,7 @@ import { useAuthContext } from '../../../context/AuthContext';
 import './Header.css';
 
 export const Header: React.FC = () => {
-    const { user, userData, logout } = useAuthContext();
+    const { user, userData, familyData, logout } = useAuthContext();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
@@ -39,7 +39,12 @@ export const Header: React.FC = () => {
     return (
         <header className="header">
             <div className="header-right-stacked">
-                <h1 className="header-logo">BigMama</h1>
+                <div className="header-info">
+                    <h1 className="header-logo">BigMama</h1>
+                    {familyData?.name && (
+                        <span className="family-name">משפחת {familyData.name}</span>
+                    )}
+                </div>
                 <div className="header-user" ref={menuRef}>
                     <button
                         className="user-avatar-button"
@@ -59,6 +64,9 @@ export const Header: React.FC = () => {
                         <div className="user-menu-dropdown">
                             <div className="user-menu-info">
                                 <span className="user-menu-name">{userData?.displayName || 'משתמש'}</span>
+                                {familyData?.name && (
+                                    <span className="user-menu-family">משפחת {familyData.name}</span>
+                                )}
                             </div>
                             <button className="user-menu-logout" onClick={handleLogout} type="button">
                                 התנתק

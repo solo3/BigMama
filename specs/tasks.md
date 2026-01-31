@@ -2,7 +2,7 @@
 
 > **Version:** 2.0  
 > **Last Updated:** 2026-01-17  
-> **Status:** Phase 4 Complete
+> **Status:** Phase 8 Complete
 
 ---
 
@@ -109,13 +109,13 @@ Update this document as you progress through implementation.
 - [ ] Redirect to dashboard
 
 ### 1.5 Join Family Flow
-- [ ] Create `src/pages/Onboarding/JoinFamily.tsx`
-- [ ] Route: `/join/:inviteCode`
-- [ ] Validate invite code exists and not used
-- [ ] Create member document with role from invite
-- [ ] Create user lookup document
-- [ ] Mark invite as used
-- [ ] Redirect to dashboard
+- [x] Create `src/pages/Onboarding/JoinPage.tsx`
+- [x] Route: `/join/:inviteCode`
+- [x] Validate invite code exists and not used
+- [x] Create member document with role from invite
+- [x] Create user lookup document
+- [x] Mark invite as used
+- [x] Redirect to dashboard
 
 ### 1.6 Protected Routes
 - [ ] Create `ProtectedRoute` component
@@ -424,10 +424,10 @@ Update this document as you progress through implementation.
 - [ ] Sections: Profile, Family, Invites, App
 
 ### 8.2 Profile Section
-- [ ] Edit display name
-- [ ] Avatar picker (emoji or photo)
-- [ ] Color picker
-- [ ] Save changes
+- [x] Edit display name
+- [x] Avatar picker (emoji or photo)
+- [x] Color picker
+- [x] Save changes
 
 ### 8.3 Family Section (Admin)
 - [ ] Family name edit
@@ -436,23 +436,23 @@ Update this document as you progress through implementation.
 - [ ] Remove member
 
 ### 8.4 Invite System
-- [ ] "Invite Parent" button → generate admin link
-- [ ] "Invite Member" button → generate member link
-- [ ] Create invite document in Firestore
-- [ ] Copy link to clipboard
-- [ ] Show active invites
-- [ ] Delete unused invite
+- [x] "Invite Parent" button → generate admin link
+- [x] "Invite Member" button → generate member link
+- [x] Create invite document in Firestore
+- [x] Copy link to clipboard
+- [x] Show active invites
+- [x] Delete unused invite
 
 ### 8.5 App Settings
-- [ ] Language toggle (Hebrew / English)
-- [ ] Logout button
+- [x] Language toggle (Hebrew / English)
+- [x] Logout button
 
 ### 8.6 Verification
-- [ ] Profile updates save
-- [ ] Invite links work
-- [ ] Admin can manage members
-- [ ] Language toggle works
-- [ ] Commit: `feat: settings and invites`
+- [x] Profile updates save
+- [x] Invite links work
+- [x] Admin can manage members
+- [x] Language toggle works
+- [x] Commit: `feat: settings and invites`
 
 ---
 

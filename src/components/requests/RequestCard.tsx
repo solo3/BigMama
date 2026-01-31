@@ -135,6 +135,7 @@ export const RequestCard: React.FC<RequestCardProps> = ({
                         className={`vote-btn vote-up ${userVote === 'up' ? 'active' : ''}`}
                         onClick={() => handleVote('up')}
                         disabled={!currentUser}
+                        aria-label="הצבע בעד"
                     >
                         <ThumbsUp size={18} />
                         <span>{upVotes}</span>
@@ -143,6 +144,7 @@ export const RequestCard: React.FC<RequestCardProps> = ({
                         className={`vote-btn vote-down ${userVote === 'down' ? 'active' : ''}`}
                         onClick={() => handleVote('down')}
                         disabled={!currentUser}
+                        aria-label="הצבע נגד"
                     >
                         <ThumbsDown size={18} />
                         <span>{downVotes}</span>
@@ -154,18 +156,18 @@ export const RequestCard: React.FC<RequestCardProps> = ({
                 <div className="admin-actions">
                     {isAdmin && (
                         <>
-                            <button className="admin-btn approve-btn" onClick={handleApprove}>
+                            <button className="admin-btn approve-btn" onClick={handleApprove} aria-label="אשר בקשה">
                                 <Check size={16} />
                                 אשר
                             </button>
-                            <button className="admin-btn reject-btn" onClick={handleReject}>
+                            <button className="admin-btn reject-btn" onClick={handleReject} aria-label="דחה בקשה">
                                 <X size={16} />
                                 דחה
                             </button>
                         </>
                     )}
                     {(isAdmin || isCreator) && (
-                        <button className="admin-btn archive-btn" onClick={handleArchive}>
+                        <button className="admin-btn archive-btn" onClick={handleArchive} aria-label="ארכב בקשה">
                             <Archive size={16} />
                             ארכב
                         </button>

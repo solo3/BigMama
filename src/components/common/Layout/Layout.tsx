@@ -15,7 +15,9 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <div className="layout-body">
                 <Navigation />
                 <main className="layout-main">
-                    {children}
+                    <div className="fade-in">
+                        {children}
+                    </div>
                 </main>
             </div>
             <OfflineIndicator />

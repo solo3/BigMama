@@ -9,7 +9,7 @@
     animation: fadeIn 0.8s ease-out;
 }
 
-.dashboard-header h1 {
+.welcome-section h1 {
     font-size: 2.5rem;
     font-weight: 800;
     letter-spacing: -0.02em;
@@ -17,11 +17,19 @@
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: var(--spacing-xs);
+    margin-bottom: 4px;
 }
 
-.text-secondary {
-    font-size: var(--text-lg);
+.family-welcome {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin-bottom: 12px;
+    opacity: 0.9;
+}
+
+.welcome-section .text-secondary {
+    font-size: var(--text-base);
     color: var(--color-text-secondary);
     font-weight: 400;
 }
