@@ -52,6 +52,7 @@ export interface Event {
     assignees: string[]; // Array of UIDs
     createdBy: string;
     createdAt: Timestamp;
+    hebrewDate?: string; // Hebrew date string (e.g., "כ׳ שבט תשפ"ו")
 }
 
 export type RequestStatus = 'open' | 'approved' | 'rejected' | 'archived';

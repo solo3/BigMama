@@ -130,6 +130,71 @@
     color: var(--color-primary);
 }
 
+/* Hebrew Calendar Styles */
+
+/* Toolbar with Hebrew/Gregorian dates */
+.hebrew-calendar-toolbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-md);
+}
+
+.hebrew-calendar-toolbar-dates {
+    text-align: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.hebrew-month-year {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-primary);
+    margin-bottom: 0.25rem;
+    font-family: 'Heebo', sans-serif;
+}
+
+.gregorian-month-year {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}
+
+/* Hebrew date numerals in day cells */
+.hebrew-date-numeral {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    font-family: 'Heebo', sans-serif;
+    font-weight: 600;
+    z-index: 1;
+}
+
+/* In RTL, left is the visual left side */
+[dir="rtl"] .hebrew-date-numeral {
+    left: auto;
+    right: 4px;
+}
+
+/* Shabbat highlighting - entire Saturday column */
+.rbc-shabbat {
+    background-color: rgba(124, 92, 255, 0.15) !important;
+}
+
+.rbc-shabbat.rbc-today {
+    background-color: rgba(124, 92, 255, 0.25) !important;
+}
+
+/* Month view specific styles for Hebrew dates */
+.rbc-month-view .rbc-day-bg {
+    position: relative;
+}
+
+.rbc-month-view .rbc-date-cell {
+    padding-top: 20px;
+    position: relative;
+}
+
 /* Responsive adjustments */
 @media (max-width: 600px) {
     .rbc-toolbar {
@@ -139,5 +204,13 @@
 
     .rbc-toolbar-label {
         order: 1;
+    }
+
+    .hebrew-month-year {
+        font-size: 1.25rem;
+    }
+
+    .hebrew-date-numeral {
+        font-size: 0.65rem;
     }
 }

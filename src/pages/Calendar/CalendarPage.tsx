@@ -11,6 +11,7 @@ import { createEvent, deleteEvent } from '../../services/events';
 import { useAuth } from '../../hooks/useAuth';
 import { useToast } from '../../hooks/useToast';
 import { LoadingSkeleton } from '../../components/common/LoadingSkeleton';
+import { getHebrewDateNumerals, getHebrewMonthYear, isShabbat } from '../../utils/hebrewCalendar';
 import './Calendar.css';
 
 const locales = {
@@ -24,6 +25,80 @@ const localizer = dateFnsLocalizer({
     getDay,
     locales,
 });
+
+// Custom Toolbar with Hebrew month/year
+const CustomToolbar: React.FC<any> = ({ label, onNavigate, onView, view }) => {
+    const [currentDate, setCurrentDate] = useState(new Date());
+    
+    const hebrewDate = useMemo(() => getHebrewMonthYear(currentDate), [currentDate]);
+    
+    const handleNavigate = (action: 'PREV' | 'NEXT' | 'TODAY') => {
+        onNavigate(action);
+        // Update our local date tracking
+        const newDate = new Date(currentDate);
+        if (action === 'PREV') {
+            newDate.setMonth(newDate.getMonth() - 1);
+        } else if (action === 'NEXT') {
+            newDate.setMonth(newDate.getMonth() + 1);
+        } else {
+            setCurrentDate(new Date());
+            return;
+        }
+        setCurrentDate(newDate);
+    };
+
+    const viewLabels: Record<string, string> = {
+        month: 'חודש',
+        week: 'שבוע',
+        day: 'יום',
+        agenda: 'סדר יום',
+    };
+
+    return (
+        <div className="rbc-toolbar hebrew-calendar-toolbar">
+            <div className="hebrew-calendar-toolbar-dates">
+                <div className="hebrew-month-year">
+                    {hebrewDate.month} {hebrewDate.year}
+                </div>
+                <div className="gregorian-month-year">
+                    {label}
+                </div>
+            </div>
+            <div className="rbc-btn-group">
+                <button type="button" onClick={() => handleNavigate('TODAY')}>היום</button>
+                <button type="button" onClick={() => handleNavigate('PREV')}>הקודם</button>
+                <button type="button" onClick={() => handleNavigate('NEXT')}>הבא</button>
+            </div>
+            <div className="rbc-btn-group">
+                {(['month', 'week', 'day', 'agenda'] as View[]).map((v) => (
+                    <button
+                        key={v}
+                        type="button"
+                        className={view === v ? 'rbc-active' : ''}
+                        onClick={() => onView(v)}
+                    >
+                        {viewLabels[v]}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+// Custom Date Cell Wrapper with Hebrew numerals
+const CustomDateCellWrapper: React.FC<any> = ({ children, value }) => {
+    const hebrewNumeral = getHebrewDateNumerals(value);
+    const shabbat = isShabbat(value);
+    
+    return (
+        <div className={`rbc-day-bg ${shabbat ? 'rbc-shabbat' : ''}`}>
+            {hebrewNumeral && (
+                <span className="hebrew-date-numeral">{hebrewNumeral}</span>
+            )}
+            {children}
+        </div>
+    );
+};
 
 export const CalendarPage: React.FC = () => {
     const { events, loading } = useEvents();
@@ -114,6 +189,10 @@ export const CalendarPage: React.FC = () => {
                 onSelectSlot={handleSelectSlot}
                 onSelectEvent={handleSelectEvent}
                 selectable
+                components={{
+                    toolbar: CustomToolbar,
+                    dateCellWrapper: CustomDateCellWrapper,
+                }}
                 messages={{
                     date: 'תאריך',
                     time: 'זמן',
