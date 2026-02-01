@@ -342,78 +342,78 @@ Update this document as you progress through implementation.
 ## Phase 6: Status (Who's Home)
 
 ### 6.1 Status Page
-- [ ] Create `src/pages/Status/Status.tsx`
-- [ ] Full-page status board
+- [x] Create `src/pages/Status/Status.tsx`
+- [x] Full-page status board
 - [ ] Date selector for future status
 
 ### 6.2 StatusBoard Component
-- [ ] Create `src/components/status/StatusBoard/StatusBoard.tsx`
-- [ ] Grid of family member cards
-- [ ] Each card shows avatar, name, status
+- [x] Create `src/components/status/StatusBoard/StatusBoard.tsx`
+- [x] Grid of family member cards
+- [x] Each card shows avatar, name, status
 
 ### 6.3 StatusCard Component
-- [ ] Create `src/components/status/StatusCard/StatusCard.tsx`
-- [ ] Member avatar and name
-- [ ] Status toggle (Home / Away)
-- [ ] Emoji indicator
+- [x] Create `src/components/status/StatusCard/StatusCard.tsx`
+- [x] Member avatar and name
+- [x] Status toggle (Home / Away)
+- [x] Emoji indicator
 
 ### 6.4 Status Operations
-- [ ] Update own status
+- [x] Update own status
 - [ ] Admin can update anyone's status
 - [ ] Set status for future date
-- [ ] Real-time sync
+- [x] Real-time sync
 
 ### 6.5 Verification
-- [ ] Status updates work
+- [x] Status updates work
 - [ ] Future status setting works
 - [ ] Admin permissions work
-- [ ] Commit: `feat: who's home status`
+- [x] Commit: `feat: who's home status`
 
 ---
 
 ## Phase 7: Requests
 
 ### 7.1 Requests Page
-- [ ] Create `src/pages/Requests/Requests.tsx`
-- [ ] List of requests
-- [ ] Filter: Open / Resolved / All
-- [ ] "+ New Request" button
+- [x] Create `src/pages/Requests/Requests.tsx`
+- [x] List of requests
+- [x] Filter: Open / Resolved / All
+- [x] "+ New Request" button
 
 ### 7.2 RequestCard Component
-- [ ] Create `src/components/requests/RequestCard/RequestCard.tsx`
-- [ ] Title, description
-- [ ] Author avatar + name
-- [ ] Type badge (suggestion / announcement)
-- [ ] Vote buttons (👍 / 👎)
-- [ ] Vote counts
-- [ ] Status badge
+- [x] Create `src/components/requests/RequestCard/RequestCard.tsx`
+- [x] Title, description
+- [x] Author avatar + name
+- [x] Type badge (suggestion / announcement)
+- [x] Vote buttons (👍 / 👎)
+- [x] Vote counts
+- [x] Status badge
 
 ### 7.3 Voting
-- [ ] Implement vote button clicks
-- [ ] Toggle vote (can change vote)
-- [ ] Real-time vote count updates
+- [x] Implement vote button clicks
+- [x] Toggle vote (can change vote)
+- [x] Real-time vote count updates
 
 ### 7.4 RequestForm Component
-- [ ] Create `src/components/requests/RequestForm/RequestForm.tsx`
-- [ ] Title, description
-- [ ] Type toggle
-- [ ] Relevant date/time (optional)
+- [x] Create `src/components/requests/RequestForm/RequestForm.tsx`
+- [x] Title, description
+- [x] Type toggle
+- [x] Relevant date/time (optional)
 
 ### 7.5 Admin Actions
-- [ ] Approve button (admin only)
-- [ ] Reject button (admin only)
-- [ ] Archive button (creator or admin)
+- [x] Approve button (admin only)
+- [x] Reject button (admin only)
+- [x] Archive button (creator or admin)
 
 ### 7.6 Expiry Handling
 - [ ] Filter out expired requests in query
 - [ ] Show expiry countdown for time-sensitive requests
 
 ### 7.7 Verification
-- [ ] Create requests works
-- [ ] Voting works
-- [ ] Admin approve/reject works
+- [x] Create requests works
+- [x] Voting works
+- [x] Admin approve/reject works
 - [ ] Expired requests hidden
-- [ ] Commit: `feat: requests and voting`
+- [x] Commit: `feat: requests and voting`
 
 ---
 
@@ -430,8 +430,8 @@ Update this document as you progress through implementation.
 - [x] Save changes
 
 ### 8.3 Family Section (Admin)
-- [ ] Family name edit
-- [ ] Members list
+- [x] Family name edit
+- [x] Members list
 - [ ] Role management (promote/demote)
 - [ ] Remove member
 
@@ -459,42 +459,42 @@ Update this document as you progress through implementation.
 ## Phase 9: Polish & PWA
 
 ### 9.1 PWA Configuration
-- [ ] Configure `vite-plugin-pwa`
-- [ ] Create manifest.json
-- [ ] Add app icons (192x192, 512x512)
-- [ ] Set theme color
+- [x] Configure `vite-plugin-pwa`
+- [x] Create manifest.json
+- [x] Add app icons (192x192, 512x512)
+- [x] Set theme color
 
 ### 9.2 Offline Support
-- [ ] Service worker caches static assets
-- [ ] Offline fallback page
+- [x] Service worker caches static assets
+- [x] Offline fallback page
 
 ### 9.3 Loading States
-- [ ] Add loading skeletons to all pages
-- [ ] Smooth transitions
+- [x] Add loading skeletons to all pages
+- [x] Smooth transitions
 
 ### 9.4 Error Handling
-- [ ] Error boundary component
-- [ ] Friendly error messages
-- [ ] Retry functionality
+- [x] Error boundary component
+- [x] Friendly error messages
+- [x] Retry functionality
 
 ### 9.5 Empty States
-- [ ] Design empty states for each list
-- [ ] Helpful CTAs
+- [x] Design empty states for each list
+- [x] Helpful CTAs
 
 ### 9.6 Animations
-- [ ] Page transitions
-- [ ] Task completion animation
-- [ ] Vote animation
-- [ ] Status toggle animation
+- [x] Page transitions
+- [x] Task completion animation
+- [x] Vote animation
+- [x] Status toggle animation
 
 ### 9.7 Performance
-- [ ] Lazy load routes
+- [x] Lazy load routes
 - [ ] Analyze bundle size
 - [ ] Optimize images
 
 ### 9.8 Accessibility
 - [ ] Keyboard navigation
-- [ ] ARIA labels
+- [x] ARIA labels
 - [ ] Focus management
 
 ### 9.9 Final Testing
@@ -510,10 +510,10 @@ Update this document as you progress through implementation.
 - [ ] Test production deployment
 
 ### 9.11 Verification
-- [ ] App installable on Android
-- [ ] Works offline (basic)
-- [ ] Performance is acceptable
-- [ ] Commit: `feat: pwa and polish`
+- [x] App installable on Android
+- [x] Works offline (basic)
+- [x] Performance is acceptable
+- [x] Commit: `feat: pwa and polish`
 
 ---
 
