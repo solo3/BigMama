@@ -113,28 +113,32 @@ BigMama uses Google Firebase for its database and authentication. You need to cr
 
 ## 🚀 Phase 4: Deployment
 
-### 1. Login to Firebase CLI
+### 1. Set Up Production Environment
+1. In the `BigMama` folder on your computer, find the file `.env.example`.
+2. Duplicate it and rename the copy to `.env.production`.
+3. Open `.env.production` and copy the configuration values from your Firebase Console.
+
+### 2. Login to Firebase CLI
 In your terminal, run:
 ```bash
-npm install -g firebase-tools
-firebase login
+npx firebase login
 ```
-Follow the browser instructions to log in with your Google account.
+Follow the browser instructions to log in with your Google account. (If you prefer to install it globally, use `npm install -g firebase-tools` first, then run `firebase login`).
 
-### 2. Initialize Project
+### 3. Initialize Project
 Run:
 ```bash
-firebase use --add
+npx firebase use default
 ```
-Select the project you created in Phase 3 from the list. Give it an alias like `prod`.
+*(Or replace `default` with the alias/project ID you created in Phase 3).*
 
-### 3. Build & Deploy
-Run this single command to send your app to the internet:
+### 4. Build & Deploy
+Run this single command to build the production bundle and send your app to the internet:
 ```bash
-npm run build && firebase deploy
+npm run deploy
 ```
 
-### 4. Success!
+### 5. Success!
 The terminal will output a **Hosting URL** (e.g., `https://bigmama-123.web.app`).
 Click it to open your live application!
 
