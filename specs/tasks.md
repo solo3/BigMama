@@ -507,7 +507,7 @@ Update this document as you progress through implementation.
 
 ### 9.7 Performance
 - [x] Lazy load routes
-- [ ] Analyze bundle size
+- [x] Analyze bundle size
 - [ ] Optimize images
 
 ### 9.8 Accessibility
@@ -522,7 +522,7 @@ Update this document as you progress through implementation.
 - [ ] Fix any bugs
 
 ### 9.10 Deployment
-- [ ] Build production bundle
+- [x] Build production bundle
 - [ ] Deploy to Firebase Hosting
 - [ ] Configure custom domain (if any)
 - [ ] Test production deployment
