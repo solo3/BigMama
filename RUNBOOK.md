@@ -88,18 +88,19 @@ BigMama uses Google Firebase for its database and authentication. You need to cr
 4. Select **Start in Production Mode**.
 5. Click **Create**.
 
-### 4. Get Configuration Keys
-1. Click the **Gear icon ⚙️** next to "Project Overview" > **Project settings**.
-2. Scroll down to **Your apps**.
-3. Click the **Web icon (`</>`)**.
-4. Register the app (nickname: "BigMama Web").
-5. You will see a code block `const firebaseConfig = { ... }`. Keep this tab open.
+### 4. Get Configuration Keys (Using the CLI)
+If your project is linked correctly, you can auto-generate the credentials using the Firebase CLI directly in your terminal:
+
+```bash
+npx firebase apps:sdkconfig web
+```
+This will print out your configuration object containing `apiKey`, `authDomain`, `projectId`, etc.
 
 ### 5. Connect App to Firebase
 1. In the `BigMama` folder on your computer, find the file `.env.example`.
-2. Duplicate it and rename the copy to `.env`.
-3. Open `.env` with a text editor (Notepad, TextEdit, VS Code).
-4. Copy the values from the Firebase Console into this file. It should look like this:
+2. Duplicate it and rename the copy to `.env.production`.
+3. Open `.env.production`.
+4. Copy the values printed from the `npx firebase apps:sdkconfig web` output into this file. It should look like this:
 
    ```env
    VITE_FIREBASE_API_KEY=AIzaSyD...
