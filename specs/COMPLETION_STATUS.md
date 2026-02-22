@@ -130,6 +130,7 @@
 | `/calendar` | CalendarPage | ✅ Complete |
 | `/settings` | SettingsPage | ✅ Complete |
 | `/requests` | RequestsPage | ✅ Complete |
+| `/join/:inviteCode` | JoinPage | ✅ Complete |
 
 ## Development Tools
 

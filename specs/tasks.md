@@ -345,6 +345,8 @@ Update this document as you progress through implementation.
 - [x] Create `src/pages/Status/Status.tsx`
 - [x] Full-page status board
 - [ ] Date selector for future status
+- [x] Member list with "exists/at home" markers and contrast polish
+- [x] "Invite Member" button and code generation logic
 
 ### 6.2 StatusBoard Component
 - [x] Create `src/components/status/StatusBoard/StatusBoard.tsx`
@@ -432,8 +434,8 @@ Update this document as you progress through implementation.
 ### 8.3 Family Section (Admin)
 - [x] Family name edit
 - [x] Members list
-- [ ] Role management (promote/demote)
-- [ ] Remove member
+- [x] Role management (promote/demote)
+- [x] Remove member
 
 ### 8.4 Invite System
 - [x] "Invite Parent" button → generate admin link
@@ -455,6 +457,22 @@ Update this document as you progress through implementation.
 - [x] Commit: `feat: settings and invites`
 
 ---
+## Phase 9: Join Flow
+### 9.1 Join Logic
+- [x] Implement `validateInvite` service
+- [x] Implement `joinFamilyWithInvite` service (transactional)
+- [x] Handle error states (expired/invalid/used code)
+
+### 9.2 Join Page
+- [x] Create `src/pages/Join/JoinPage.tsx`
+- [x] Retrieve invite code from URL
+- [x] Display family info (Name, Inviter)
+- [x] "Join Family" button
+- [x] Redirect to dashboard on success
+
+### 9.3 Routing & Auth
+- [x] Add `/join/:inviteCode` route
+- [x] Ensure non-logged-in users are redirected to Login then back to Join
 
 ## Phase 9: Polish & PWA
 

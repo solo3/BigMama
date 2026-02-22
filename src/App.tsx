@@ -14,7 +14,7 @@ const TasksPage = lazy(() => import('./pages/Tasks/TasksPage').then(m => ({ defa
 const CalendarPage = lazy(() => import('./pages/Calendar/CalendarPage').then(m => ({ default: m.CalendarPage })));
 const RequestsPage = lazy(() => import('./pages/Requests/RequestsPage').then(m => ({ default: m.RequestsPage })));
 const StatusPage = lazy(() => import('./pages/Status/StatusPage').then(m => ({ default: m.StatusPage })));
-const JoinPage = lazy(() => import('./pages/Onboarding/JoinPage').then(m => ({ default: m.JoinPage })));
+const JoinPage = lazy(() => import('./pages/Join/JoinPage').then(m => ({ default: m.JoinPage })));
 
 const PageLoader = () => (
   <div style={{ padding: 'var(--spacing-xl)', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
@@ -65,11 +65,19 @@ function App() {
 
   return (
     <BrowserRouter>
-      <ProtectedRoute>
-        <Suspense fallback={<PageLoader />}>
-          {renderContent()}
-        </Suspense>
-      </ProtectedRoute>
+      <Suspense fallback={<PageLoader />}>
+        <Routes>
+          <Route path="/join/:inviteCode" element={<JoinPage />} />
+          <Route
+            path="*"
+            element={
+              <ProtectedRoute>
+                {renderContent()}
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Suspense>
       <DevLogger />
     </BrowserRouter>
   );
