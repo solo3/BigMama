@@ -33,7 +33,7 @@ export const RequestCard: React.FC<RequestCardProps> = ({
         try {
             // If user already voted this way, we could remove vote, but spec says toggle
             // For simplicity, allow changing vote
-            await voteOnRequest(familyId, request.id, currentUser.uid, voteType);
+            await voteOnRequest(familyId, currentUser.uid, request.id, voteType);
         } catch (error) {
             console.error('Failed to vote:', error);
             alert('שגיאה בהצבעה');
@@ -41,9 +41,9 @@ export const RequestCard: React.FC<RequestCardProps> = ({
     };
 
     const handleApprove = async () => {
-        if (!familyId || !isAdmin) return;
+        if (!familyId || !currentUser || !isAdmin) return;
         try {
-            await updateRequestStatus(familyId, request.id, 'approved');
+            await updateRequestStatus(familyId, currentUser.uid, request.id, 'approved');
         } catch (error) {
             console.error('Failed to approve:', error);
             alert('שגיאה באישור הבקשה');
@@ -51,10 +51,10 @@ export const RequestCard: React.FC<RequestCardProps> = ({
     };
 
     const handleReject = async () => {
-        if (!familyId || !isAdmin) return;
+        if (!familyId || !currentUser || !isAdmin) return;
         if (!window.confirm('האם לדחות את הבקשה?')) return;
         try {
-            await updateRequestStatus(familyId, request.id, 'rejected');
+            await updateRequestStatus(familyId, currentUser.uid, request.id, 'rejected');
         } catch (error) {
             console.error('Failed to reject:', error);
             alert('שגיאה בדחיית הבקשה');
@@ -62,10 +62,10 @@ export const RequestCard: React.FC<RequestCardProps> = ({
     };
 
     const handleArchive = async () => {
-        if (!familyId || (!isAdmin && !isCreator)) return;
+        if (!familyId || !currentUser || (!isAdmin && !isCreator)) return;
         if (!window.confirm('האם לארכב את הבקשה?')) return;
         try {
-            await updateRequestStatus(familyId, request.id, 'archived');
+            await updateRequestStatus(familyId, currentUser.uid, request.id, 'archived');
         } catch (error) {
             console.error('Failed to archive:', error);
             alert('שגיאה בארכוב הבקשה');

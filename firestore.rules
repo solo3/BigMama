@@ -19,9 +19,41 @@ service cloud.firestore {
              get(/databases/$(database)/documents/families/$(familyId)/members/$(request.auth.uid)).data.role == 'admin';
     }
 
+    // Helper to get user's familyId from user doc
+    function getUserFamilyId() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.familyId;
+    }
+
+    // Audit collection: Top-level collection for logging all changes
+    // Users can only read audit entries for their own family
+    // No direct writes - only through service functions in the app
+    match /audit/{auditId} {
+      allow read: if isAuthenticated() && 
+                   resource.data.familyId == getUserFamilyId();
+      allow create, update, delete: if false;
+    }
+
     // User profile: only the user themselves can read/write their profile
     match /users/{uid} {
       allow read, write: if isAuthenticated() && request.auth.uid == uid;
+      allow delete: if false;
+    }
+
+    // Invites: Root collection for easier querying by code
+    match /invites/{inviteCode} {
+      // Anyone can read an invite if they have the code (needed for joining)
+      // Limitation: This allows enumerating invites if codes are guessable. 
+      // Ideally, use a cloud function to validate code, or long random IDs.
+      allow read: if true;
+
+      // Only family admins can create invites for their family
+      allow create: if isAdmin(request.resource.data.familyId);
+
+      // Prevent delete
+      allow delete: if false;
+      
+      // No updates allowed (immutable)
+      allow update: if false;
     }
 
     // Families: 
@@ -35,6 +67,9 @@ service cloud.firestore {
       // Allow updates only for members (e.g. changing name). 
       // Ideally restrict to admins, but keeping flexible for MVP.
       allow update: if isAdmin(familyId);
+
+      // Prevent delete of family
+      allow delete: if false;
 
       // Members subcollection
       match /members/{memberId} {
@@ -51,8 +86,8 @@ service cloud.firestore {
                      (request.auth.uid == memberId && 
                       (!request.resource.data.diff(resource.data).affectedKeys().hasAny(['role'])));
         
-        // Deletion: Only admins can remove members
-        allow delete: if isAdmin(familyId);
+        // Deletion: Prevent member deletion (can only leave via update or role change)
+        allow delete: if false;
       }
 
       // Feature Collections

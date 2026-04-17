@@ -7,7 +7,8 @@ import {
     onSnapshot,
     query,
     orderBy,
-    serverTimestamp
+    serverTimestamp,
+    getDoc
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { Event } from '../types/models';
@@ -15,30 +16,70 @@ import { getHebrewDate } from '../utils/hebrewCalendar';
 
 const getEventsCol = (familyId: string) => collection(db, 'families', familyId, 'events');
 
-export const createEvent = async (familyId: string, event: Omit<Event, 'id' | 'createdAt' | 'hebrewDate'>) => {
-    // Auto-compute Hebrew date from startDate
+export const createEvent = async (familyId: string, userId: string, event: Omit<Event, 'id' | 'createdAt' | 'hebrewDate'>) => {
     const hebrewDate = getHebrewDate(event.startDate.toDate());
-    
-    return addDoc(getEventsCol(familyId), {
+
+    const docRef = await addDoc(getEventsCol(familyId), {
         ...event,
         hebrewDate,
         createdAt: serverTimestamp(),
     });
+
+    // Audit
+    await addDoc(collection(db, 'audit'), {
+        familyId,
+        collection: 'events',
+        docId: docRef.id,
+        action: 'create',
+        userId,
+        newData: event,
+        timestamp: serverTimestamp()
+    });
+
+    return docRef;
 };
 
-export const updateEvent = async (familyId: string, eventId: string, updates: Partial<Event>) => {
+export const updateEvent = async (familyId: string, userId: string, eventId: string, updates: Partial<Event>) => {
+    const eventSnap = await getDoc(doc(db, 'families', familyId, 'events', eventId));
+    const previousData = eventSnap.exists() ? eventSnap.data() : null;
+
     const eventRef = doc(db, 'families', familyId, 'events', eventId);
-    
-    // If startDate is being updated, also update the Hebrew date
+
     if (updates.startDate) {
         updates.hebrewDate = getHebrewDate(updates.startDate.toDate());
     }
-    
-    return updateDoc(eventRef, updates);
+
+    await updateDoc(eventRef, updates);
+
+    // Audit
+    await addDoc(collection(db, 'audit'), {
+        familyId,
+        collection: 'events',
+        docId: eventId,
+        action: 'update',
+        userId,
+        previousData,
+        newData: updates,
+        timestamp: serverTimestamp()
+    });
 };
 
-export const deleteEvent = async (familyId: string, eventId: string) => {
-    return deleteDoc(doc(db, 'families', familyId, 'events', eventId));
+export const deleteEvent = async (familyId: string, userId: string, eventId: string) => {
+    const eventSnap = await getDoc(doc(db, 'families', familyId, 'events', eventId));
+    const previousData = eventSnap.exists() ? eventSnap.data() : null;
+
+    await deleteDoc(doc(db, 'families', familyId, 'events', eventId));
+
+    // Audit
+    await addDoc(collection(db, 'audit'), {
+        familyId,
+        collection: 'events',
+        docId: eventId,
+        action: 'delete',
+        userId,
+        previousData,
+        timestamp: serverTimestamp()
+    });
 };
 
 export const subscribeToEvents = (familyId: string, callback: (events: Event[]) => void) => {

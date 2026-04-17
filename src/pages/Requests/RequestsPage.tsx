@@ -26,7 +26,7 @@ export const RequestsPage = () => {
         if (!familyId || !user) return;
 
         try {
-            await createRequest(familyId, {
+            await createRequest(familyId, user.uid, {
                 title: requestData.title || '',
                 description: requestData.description || '',
                 type: requestData.type || 'suggestion',

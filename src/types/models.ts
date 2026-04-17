@@ -78,6 +78,20 @@ export interface DailyStatus {
     updatedAt: Timestamp;
 }
 
+export type AuditAction = 'create' | 'update' | 'delete';
+
+export interface AuditEntry {
+    id: string;
+    familyId: string;
+    collection: string;
+    docId: string;
+    action: AuditAction;
+    userId: string;
+    previousData?: unknown;
+    newData?: unknown;
+    timestamp: Timestamp;
+}
+
 export interface Invite {
     id: string; // The invite code
     familyId: string;

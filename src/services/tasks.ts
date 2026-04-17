@@ -7,36 +7,81 @@ import {
     onSnapshot,
     query,
     orderBy,
-    serverTimestamp
+    serverTimestamp,
+    getDoc
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { Task, TaskStatus } from '../types/models';
 
 const getTasksCol = (familyId: string) => collection(db, 'families', familyId, 'tasks');
 
-export const createTask = async (familyId: string, task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
-    return addDoc(getTasksCol(familyId), {
+export const createTask = async (familyId: string, userId: string, task: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => {
+    const docRef = await addDoc(getTasksCol(familyId), {
         ...task,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
     });
+
+    // Audit
+    await addDoc(collection(db, 'audit'), {
+        familyId,
+        collection: 'tasks',
+        docId: docRef.id,
+        action: 'create',
+        userId,
+        newData: task,
+        timestamp: serverTimestamp()
+    });
+
+    return docRef;
 };
 
-export const updateTask = async (familyId: string, taskId: string, updates: Partial<Task>) => {
+export const updateTask = async (familyId: string, userId: string, taskId: string, updates: Partial<Task>) => {
+    // Get previous data for audit
+    const taskSnap = await getDoc(doc(db, 'families', familyId, 'tasks', taskId));
+    const previousData = taskSnap.exists() ? taskSnap.data() : null;
+
     const taskRef = doc(db, 'families', familyId, 'tasks', taskId);
-    return updateDoc(taskRef, {
+    await updateDoc(taskRef, {
         ...updates,
         updatedAt: serverTimestamp(),
     });
+
+    // Audit
+    await addDoc(collection(db, 'audit'), {
+        familyId,
+        collection: 'tasks',
+        docId: taskId,
+        action: 'update',
+        userId,
+        previousData,
+        newData: updates,
+        timestamp: serverTimestamp()
+    });
 };
 
-export const toggleTaskStatus = async (familyId: string, taskId: string, currentStatus: TaskStatus) => {
+export const toggleTaskStatus = async (familyId: string, userId: string, taskId: string, currentStatus: TaskStatus) => {
     const newStatus: TaskStatus = currentStatus === 'todo' ? 'done' : 'todo';
-    return updateTask(familyId, taskId, { status: newStatus });
+    return updateTask(familyId, userId, taskId, { status: newStatus });
 };
 
-export const deleteTask = async (familyId: string, taskId: string) => {
-    return deleteDoc(doc(db, 'families', familyId, 'tasks', taskId));
+export const deleteTask = async (familyId: string, userId: string, taskId: string) => {
+    // Get previous data for audit
+    const taskSnap = await getDoc(doc(db, 'families', familyId, 'tasks', taskId));
+    const previousData = taskSnap.exists() ? taskSnap.data() : null;
+
+    await deleteDoc(doc(db, 'families', familyId, 'tasks', taskId));
+
+    // Audit
+    await addDoc(collection(db, 'audit'), {
+        familyId,
+        collection: 'tasks',
+        docId: taskId,
+        action: 'delete',
+        userId,
+        previousData,
+        timestamp: serverTimestamp()
+    });
 };
 
 export const subscribeToTasks = (familyId: string, callback: (tasks: Task[]) => void) => {

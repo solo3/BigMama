@@ -27,24 +27,11 @@ const localizer = dateFnsLocalizer({
 });
 
 // Custom Toolbar with Hebrew month/year
-const CustomToolbar: React.FC<any> = ({ label, onNavigate, onView, view }) => {
-    const [currentDate, setCurrentDate] = useState(new Date());
-    
-    const hebrewDate = useMemo(() => getHebrewMonthYear(currentDate), [currentDate]);
+const CustomToolbar: React.FC<any> = ({ date, label, onNavigate, onView, view }) => {
+    const hebrewDate = useMemo(() => getHebrewMonthYear(date), [date]);
     
     const handleNavigate = (action: 'PREV' | 'NEXT' | 'TODAY') => {
         onNavigate(action);
-        // Update our local date tracking
-        const newDate = new Date(currentDate);
-        if (action === 'PREV') {
-            newDate.setMonth(newDate.getMonth() - 1);
-        } else if (action === 'NEXT') {
-            newDate.setMonth(newDate.getMonth() + 1);
-        } else {
-            setCurrentDate(new Date());
-            return;
-        }
-        setCurrentDate(newDate);
     };
 
     const viewLabels: Record<string, string> = {
@@ -85,7 +72,7 @@ const CustomToolbar: React.FC<any> = ({ label, onNavigate, onView, view }) => {
     );
 };
 
-// Custom Date Cell Wrapper with Hebrew numerals
+// Custom Date Cell Wrapper with Hebrew numerals (for month view)
 const CustomDateCellWrapper: React.FC<any> = ({ children, value }) => {
     const hebrewNumeral = getHebrewDateNumerals(value);
     const shabbat = isShabbat(value);
@@ -96,6 +83,21 @@ const CustomDateCellWrapper: React.FC<any> = ({ children, value }) => {
                 <span className="hebrew-date-numeral">{hebrewNumeral}</span>
             )}
             {children}
+        </div>
+    );
+};
+
+// Custom Header with Hebrew date (for week/day views)
+const CustomHeader: React.FC<any> = ({ label, date }) => {
+    const hebrewNumeral = getHebrewDateNumerals(date);
+    const shabbat = isShabbat(date);
+    
+    return (
+        <div className={`rbc-header-hebrew ${shabbat ? 'rbc-shabbat-header' : ''}`}>
+            <span className="rbc-header-label">{label}</span>
+            {hebrewNumeral && (
+                <span className="hebrew-date-numeral-header">{hebrewNumeral}</span>
+            )}
         </div>
     );
 };
@@ -122,7 +124,7 @@ export const CalendarPage: React.FC = () => {
         const title = window.prompt('שם האירוע:');
         if (title && familyId && user) {
             try {
-                await createEvent(familyId, {
+                await createEvent(familyId, user.uid, {
                     title,
                     startDate: Timestamp.fromDate(start),
                     endDate: Timestamp.fromDate(end),
@@ -149,10 +151,10 @@ export const CalendarPage: React.FC = () => {
 
     const handleSelectEvent = async (event: CalendarEvent) => {
         const action = window.prompt(`אירוע: ${event.title}\n[1] ערוך (לא מיושם)\n[2] מחק`);
-        if (action === '2' && familyId) {
+        if (action === '2' && familyId && user) {
             if (window.confirm('למחוק את האירוע?')) {
                 try {
-                    await deleteEvent(familyId, event.id);
+                    await deleteEvent(familyId, user.uid, event.id);
                     addToast('אירוע נמחק בהצלחה', 'success');
                 } catch (error) {
                     console.error("Error deleting event:", error);
@@ -192,6 +194,7 @@ export const CalendarPage: React.FC = () => {
                 components={{
                     toolbar: CustomToolbar,
                     dateCellWrapper: CustomDateCellWrapper,
+                    header: CustomHeader,
                 }}
                 messages={{
                     date: 'תאריך',

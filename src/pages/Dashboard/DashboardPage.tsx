@@ -35,7 +35,7 @@ export const DashboardPage: React.FC = () => {
 
         setIsAddingTask(true);
         try {
-            await createTask(familyId, {
+            await createTask(familyId, user.uid, {
                 title: newTaskTitle,
                 status: 'todo',
                 assignees: [],
@@ -57,7 +57,7 @@ export const DashboardPage: React.FC = () => {
 
         setIsAddingRequest(true);
         try {
-            await createRequest(familyId, {
+            await createRequest(familyId, user.uid, {
                 title: newRequestTitle,
                 type: 'suggestion',
                 description: '',
@@ -75,9 +75,9 @@ export const DashboardPage: React.FC = () => {
     };
 
     const handleToggleTask = async (taskId: string, currentStatus: TaskStatus) => {
-        if (!familyId) return;
+        if (!familyId || !user) return;
         try {
-            await toggleTaskStatus(familyId, taskId, currentStatus);
+            await toggleTaskStatus(familyId, user.uid, taskId, currentStatus);
         } catch (error) {
             console.error('Failed to toggle task:', error);
             addToast('שגיאה עדכון סטטוס המשימה', 'error');
@@ -91,7 +91,7 @@ export const DashboardPage: React.FC = () => {
         const newStatus: PresenceStatus = currentStatus === 'home' ? 'away' : 'home';
 
         try {
-            await updateMemberStatus(familyId, user.uid, dateId, newStatus);
+            await updateMemberStatus(familyId, user.uid, user.uid, dateId, newStatus);
             addToast(`סטטוס עודכן ל-${newStatus === 'home' ? 'בבית' : 'מחוץ לבית'}`, 'success');
         } catch (error) {
             console.error('Failed to update presence:', error);

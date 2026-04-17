@@ -32,11 +32,11 @@ export const TasksPage = () => {
     };
 
     const handleSaveTask = async (taskData: Partial<Task>) => {
-        if (!familyId) return;
+        if (!familyId || !user) return;
 
         try {
             if (editingTask) {
-                await updateTask(familyId, editingTask.id, taskData);
+                await updateTask(familyId, user.uid, editingTask.id, taskData);
                 addToast('משימה עודכנה בהצלחה', 'success');
             } else {
                 const newTask: Omit<Task, 'id' | 'createdAt' | 'updatedAt'> = {
@@ -44,10 +44,10 @@ export const TasksPage = () => {
                     description: taskData.description,
                     status: 'todo',
                     assignees: taskData.assignees || [],
-                    createdBy: user?.uid || '',
+                    createdBy: user.uid,
                     dueDate: taskData.dueDate,
                 };
-                await createTask(familyId, newTask);
+                await createTask(familyId, user.uid, newTask);
                 addToast('משימה נוצרה בהצלחה', 'success');
             }
         } catch (error) {
@@ -57,9 +57,9 @@ export const TasksPage = () => {
     };
 
     const handleDeleteTask = async (taskId: string) => {
-        if (!familyId || !window.confirm('האם למחוק את המשימה?')) return;
+        if (!familyId || !user || !window.confirm('האם למחוק את המשימה?')) return;
         try {
-            await deleteTask(familyId, taskId);
+            await deleteTask(familyId, user.uid, taskId);
             addToast('משימה נמחקה בהצלחה', 'success');
         } catch (error) {
             console.error("Failed to delete task", error);
@@ -68,9 +68,9 @@ export const TasksPage = () => {
     };
 
     const handleToggleStatus = async (task: Task) => {
-        if (!familyId) return;
+        if (!familyId || !user) return;
         try {
-            await toggleTaskStatus(familyId, task.id, task.status);
+            await toggleTaskStatus(familyId, user.uid, task.id, task.status);
             // Optional: toast for status toggle might be too noisy, but let's add it for consistency or maybe skip for toggle
             // addToast('סטטוס משימה עודכן', 'info'); 
         } catch (error) {
